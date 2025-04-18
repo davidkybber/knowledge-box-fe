@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -9,11 +9,24 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule, FormsModule],
   templateUrl: './login.component.html'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   username: string = '';
   password: string = '';
+  successMessage: string = '';
   
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
+  
+  ngOnInit() {
+    // Check for registration success message in query params
+    this.route.queryParams.subscribe(params => {
+      if (params['registrationSuccess']) {
+        this.successMessage = 'Account created successfully! Please login.';
+      }
+    });
+  }
   
   onLogin() {
     // Here you would typically call an authentication service
@@ -22,7 +35,6 @@ export class LoginComponent {
   }
   
   onCreateAccount() {
-    // This will be implemented later
-    console.log('Create account clicked');
+    this.router.navigate(['/signup']);
   }
 }

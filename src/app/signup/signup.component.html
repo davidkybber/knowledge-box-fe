@@ -1,0 +1,104 @@
+<div class="flex justify-center items-center h-screen bg-gray-100">
+  <div class="bg-white rounded-lg shadow-md p-8 w-full max-w-md">
+    <h2 class="text-2xl font-semibold text-center mb-6 text-gray-800">Create Account</h2>
+    
+    <div *ngIf="errorMessage" class="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
+      {{ errorMessage }}
+    </div>
+    
+    <form [formGroup]="signupForm" (ngSubmit)="onSignup()">
+      <div class="mb-4">
+        <label for="username" class="block mb-2 text-sm font-medium text-gray-700">Username</label>
+        <input
+          type="text"
+          id="username"
+          formControlName="username"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          [ngClass]="{'border-red-500': f['username'].touched && f['username'].invalid}"
+        />
+        <div *ngIf="f['username'].touched && f['username'].errors" class="mt-1 text-sm text-red-600">
+          <div *ngIf="f['username'].errors['required']">Username is required</div>
+          <div *ngIf="f['username'].errors['minlength']">Username must be at least 3 characters</div>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label for="email" class="block mb-2 text-sm font-medium text-gray-700">Email</label>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          [ngClass]="{'border-red-500': f['email'].touched && f['email'].invalid}"
+        />
+        <div *ngIf="f['email'].touched && f['email'].errors" class="mt-1 text-sm text-red-600">
+          <div *ngIf="f['email'].errors['required']">Email is required</div>
+          <div *ngIf="f['email'].errors['email']">Please enter a valid email address</div>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label for="password" class="block mb-2 text-sm font-medium text-gray-700">Password</label>
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          [ngClass]="{'border-red-500': f['password'].touched && f['password'].invalid}"
+        />
+        <div *ngIf="f['password'].touched && f['password'].errors" class="mt-1 text-sm text-red-600">
+          <div *ngIf="f['password'].errors['required']">Password is required</div>
+          <div *ngIf="f['password'].errors['passwordStrength']">
+            Password must contain:
+            <ul class="list-disc pl-5 mt-1">
+              <ng-container *ngIf="!f['password'].errors['passwordStrength'].hasMinLength">
+                <li>At least 8 characters</li>
+              </ng-container>
+              <ng-container *ngIf="!f['password'].errors['passwordStrength'].hasUpperCase">
+                <li>At least one uppercase letter</li>
+              </ng-container>
+              <ng-container *ngIf="!f['password'].errors['passwordStrength'].hasLowerCase">
+                <li>At least one lowercase letter</li>
+              </ng-container>
+              <ng-container *ngIf="!f['password'].errors['passwordStrength'].hasNumeric">
+                <li>At least one number</li>
+              </ng-container>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-6">
+        <label for="confirmPassword" class="block mb-2 text-sm font-medium text-gray-700">Confirm Password</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          formControlName="confirmPassword"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          [ngClass]="{'border-red-500': f['confirmPassword'].touched && (f['confirmPassword'].errors || signupForm.errors?.['passwordMismatch'])}"
+        />
+        <div *ngIf="f['confirmPassword'].touched && (f['confirmPassword'].errors || signupForm.errors?.['passwordMismatch'])" class="mt-1 text-sm text-red-600">
+          <div *ngIf="f['confirmPassword'].errors?.['required']">Please confirm your password</div>
+          <div *ngIf="signupForm.errors?.['passwordMismatch']">Passwords do not match</div>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-3">
+        <button
+          type="submit"
+          [disabled]="isSubmitting"
+          class="py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors disabled:bg-blue-400"
+        >
+          {{ isSubmitting ? 'Creating Account...' : 'Create Account' }}
+        </button>
+        <button
+          type="button"
+          class="py-2 px-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-md transition-colors"
+          (click)="onCancel()"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

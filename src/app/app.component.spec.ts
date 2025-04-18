@@ -1,10 +1,16 @@
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AppComponent],
+      imports: [
+        AppComponent
+      ],
+      providers: [
+        provideRouter([], withComponentInputBinding())
+      ]
     }).compileComponents();
   });
 
@@ -20,10 +26,10 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('knowledge-box-fe');
   });
 
-  it('should render title', () => {
+  it('should have router-outlet', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, knowledge-box-fe');
+    expect(compiled.querySelector('router-outlet')).not.toBeNull();
   });
 });
