@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../core/services/auth.service';
+import { UserSignupRequest } from '../core/models/auth.models';
 
 @Component({
   selector: 'app-signup',
@@ -18,42 +19,29 @@ export class SignupComponent {
   
   constructor(
     private router: Router, 
-    private http: HttpClient,
+    private authService: AuthService,
     private fb: FormBuilder
   ) {
     this.signupForm = new FormGroup({
-      username: new FormControl('', [Validators.required, Validators.minLength(3)]),
-      email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [Validators.required, this.createPasswordStrengthValidator()]),
-      confirmPassword: new FormControl('', Validators.required)
+      username: new FormControl('', [
+        Validators.required, 
+        Validators.minLength(3),
+        Validators.maxLength(100)
+      ]),
+      email: new FormControl('', [
+        Validators.required, 
+        Validators.email,
+        Validators.maxLength(100)
+      ]),
+      password: new FormControl('', [
+        Validators.required, 
+        Validators.minLength(8),
+        Validators.maxLength(100)
+      ]),
+      confirmPassword: new FormControl('', Validators.required),
+      firstName: new FormControl(''),
+      lastName: new FormControl('')
     }, { validators: this.passwordMatchValidator() });
-  }
-
-  // Custom validator for password strength
-  createPasswordStrengthValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const value = control.value;
-      
-      if (!value) {
-        return null;
-      }
-      
-      const hasUpperCase = /[A-Z]/.test(value);
-      const hasLowerCase = /[a-z]/.test(value);
-      const hasNumeric = /[0-9]/.test(value);
-      const hasMinLength = value.length >= 8;
-      
-      const passwordValid = hasUpperCase && hasLowerCase && hasNumeric && hasMinLength;
-      
-      return !passwordValid ? {
-        passwordStrength: {
-          hasUpperCase,
-          hasLowerCase,
-          hasNumeric,
-          hasMinLength
-        }
-      } : null;
-    };
   }
 
   // Custom validator to ensure passwords match
@@ -91,39 +79,48 @@ export class SignupComponent {
       return;
     }
 
-    // Prepare data for API
-    const userData = {
+    // Prepare data for API according to backend model
+    const signupRequest: UserSignupRequest = {
       username: this.f['username'].value,
+      email: this.f['email'].value,
       password: this.f['password'].value,
-      email: this.f['email'].value
+      firstName: this.f['firstName'].value || undefined,
+      lastName: this.f['lastName'].value || undefined
     };
 
     this.isSubmitting = true;
 
-    // Always use HTTPS for API requests
-    const apiUrl = '/api/auth/signup';
-    
-    this.http.post(apiUrl, userData).subscribe({
+    this.authService.signup(signupRequest).subscribe({
       next: (response) => {
-        console.log('Account created successfully');
         this.isSubmitting = false;
-        this.router.navigate(['/login'], { 
-          queryParams: { registrationSuccess: 'true' } 
-        });
+        if (response.success) {
+          console.log('Account created successfully');
+          this.router.navigate(['/login'], { 
+            queryParams: { registrationSuccess: 'true' } 
+          });
+        } else {
+          this.errorMessage = response.message || 'Failed to create account. Please try again.';
+        }
       },
       error: (error) => {
         this.isSubmitting = false;
+        console.error('Signup error:', error);
         
-        // Handle different error types
-        if (error.status === 409) {
+        // Handle different error types based on your backend response
+        if (error.status === 400) {
+          // Backend validation errors
+          if (error.error && error.error.message) {
+            this.errorMessage = error.error.message;
+          } else {
+            this.errorMessage = 'Invalid input data. Please check your information.';
+          }
+        } else if (error.status === 409) {
           this.errorMessage = 'Username or email already exists';
-        } else if (error.status === 400) {
-          this.errorMessage = 'Invalid input data. Please check your information.';
+        } else if (error.status === 0) {
+          this.errorMessage = 'Unable to connect to the server. Please check your internet connection.';
         } else {
           this.errorMessage = 'Failed to create account. Please try again later.';
         }
-        
-        console.error('Signup error:', error);
       }
     });
   }
