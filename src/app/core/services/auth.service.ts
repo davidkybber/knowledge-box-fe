@@ -4,12 +4,13 @@ import { Observable, BehaviorSubject, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { UserSignupRequest, UserSignupResponse, LoginRequest, LoginResponse, UserDto } from '../models/auth.models';
 import { NotificationService } from './notification.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly baseUrl = 'https://knowledge-box-auth-service.lemonhill-9a1917eb.westeurope.azurecontainerapps.io';
+  private readonly baseUrl = environment.authUrl;
   private readonly TOKEN_KEY = 'auth_token';
   private readonly USER_KEY = 'current_user';
   

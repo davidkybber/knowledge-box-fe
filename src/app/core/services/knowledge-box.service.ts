@@ -10,12 +10,13 @@ import {
   DeleteKnowledgeBoxResponse 
 } from '../models/knowledge-box.models';
 import { NotificationService } from './notification.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class KnowledgeBoxService {
-  private readonly baseUrl = 'https://knowledge-box-api.lemonhill-9a1917eb.westeurope.azurecontainerapps.io';
+  private readonly baseUrl = environment.apiUrl;
   
   private knowledgeBoxesSubject = new BehaviorSubject<KnowledgeBox[]>([]);
   public knowledgeBoxes$ = this.knowledgeBoxesSubject.asObservable();
