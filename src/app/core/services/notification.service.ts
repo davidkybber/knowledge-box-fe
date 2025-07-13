@@ -35,6 +35,22 @@ export class NotificationService {
     this.show('Your session has expired. Please log in again.', 'warning', 8000);
   }
 
+  showSuccess(message: string, duration: number = 5000): void {
+    this.show(message, 'success', duration);
+  }
+
+  showError(message: string, duration: number = 5000): void {
+    this.show(message, 'error', duration);
+  }
+
+  showWarning(message: string, duration: number = 5000): void {
+    this.show(message, 'warning', duration);
+  }
+
+  showInfo(message: string, duration: number = 5000): void {
+    this.show(message, 'info', duration);
+  }
+
   remove(id: string): void {
     const currentNotifications = this.notificationsSubject.value;
     this.notificationsSubject.next(currentNotifications.filter(n => n.id !== id));
