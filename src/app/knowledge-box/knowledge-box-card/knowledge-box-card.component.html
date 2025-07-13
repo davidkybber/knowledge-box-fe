@@ -1,0 +1,42 @@
+<div class="knowledge-box-card">
+  <div class="card-header">
+    <h3 class="card-title">{{ knowledgeBox.title }}</h3>
+    <div class="card-actions">
+      <button class="action-btn edit-btn" (click)="onEdit()" title="Edit">
+        <i class="icon-edit">✎</i>
+      </button>
+      <button class="action-btn delete-btn" (click)="onDelete()" title="Delete">
+        <i class="icon-delete">🗑</i>
+      </button>
+    </div>
+  </div>
+  
+  <div class="card-topic">
+    <span class="topic-label">Topic:</span>
+    <span class="topic-value">{{ knowledgeBox.topic }}</span>
+  </div>
+  
+  <div class="card-content">
+    <p class="content-preview">{{ getPreview() }}</p>
+  </div>
+  
+  <div class="card-tags" *ngIf="knowledgeBox.tags && knowledgeBox.tags.length > 0">
+    <div class="tag-container">
+      <span class="tag" *ngFor="let tag of knowledgeBox.tags.slice(0, 3)">{{ tag }}</span>
+      <span class="tag-more" *ngIf="knowledgeBox.tags.length > 3">+{{ knowledgeBox.tags.length - 3 }} more</span>
+    </div>
+  </div>
+  
+  <div class="card-footer">
+    <div class="card-info">
+      <span class="info-item">
+        <i class="icon-calendar">📅</i>
+        {{ getFormattedDate(knowledgeBox.updatedAt) }}
+      </span>
+      <span class="info-item" *ngIf="knowledgeBox.isPublic">
+        <i class="icon-public">🌐</i>
+        Public
+      </span>
+    </div>
+  </div>
+</div>

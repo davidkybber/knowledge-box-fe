@@ -10,24 +10,46 @@
   <main class="main-content">
     <div class="welcome-section">
       <h2>Welcome, {{ username }}!</h2>
-      <p>You have successfully logged in to Knowledge Box.</p>
+      <p>Create and manage your personal knowledge collections.</p>
     </div>
     
-    <div class="features-section">
-      <h3>What would you like to do today?</h3>
-      <div class="feature-cards">
-        <div class="feature-card">
-          <h4>Browse Knowledge</h4>
-          <p>Explore the knowledge repository</p>
-        </div>
-        <div class="feature-card">
-          <h4>Add Content</h4>
-          <p>Contribute to the knowledge base</p>
-        </div>
-        <div class="feature-card">
-          <h4>Search</h4>
-          <p>Find specific information quickly</p>
-        </div>
+    <div class="actions-section">
+      <button class="create-btn" (click)="onCreateNew()">
+        <span class="btn-icon">+</span>
+        Create New Knowledge Box
+      </button>
+      <div class="search-container">
+        <input 
+          type="text" 
+          placeholder="Search your knowledge boxes..."
+          class="search-input"
+          [(ngModel)]="searchQuery"
+          (input)="onSearch()"
+        >
+      </div>
+    </div>
+    
+    <div class="knowledge-boxes-section">
+      <div *ngIf="isLoading" class="loading-container">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Loading your knowledge boxes...</p>
+      </div>
+      
+      <div *ngIf="!isLoading && knowledgeBoxes.length === 0" class="empty-state">
+        <div class="empty-icon">📚</div>
+        <h3>No Knowledge Boxes Yet</h3>
+        <p>Create your first knowledge box to start organizing your thoughts and learning!</p>
+        <button class="create-btn-secondary" (click)="onCreateNew()">
+          Create Your First Knowledge Box
+        </button>
+      </div>
+      
+      <div *ngIf="!isLoading && knowledgeBoxes.length > 0" class="knowledge-boxes-grid">
+        <app-knowledge-box-card 
+          *ngFor="let box of knowledgeBoxes" 
+          [knowledgeBox]="box"
+          (deleteClicked)="onDeleteKnowledgeBox($event)"
+        ></app-knowledge-box-card>
       </div>
     </div>
   </main>
