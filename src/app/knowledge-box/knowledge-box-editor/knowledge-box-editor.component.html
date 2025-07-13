@@ -1,0 +1,99 @@
+<div class="editor-container">
+  <header class="editor-header">
+    <div class="logo-section">
+      <app-logo size="40" color="white" customClass="logo"></app-logo>
+      <h1>Knowledge Box Editor</h1>
+    </div>
+    <div class="header-actions">
+      <span class="username">{{ username }}</span>
+      <button class="logout-btn" (click)="onLogout()">Logout</button>
+    </div>
+  </header>
+
+  <div class="editor-content" *ngIf="!isLoading">
+    <div class="editor-main">
+      <div class="form-section">
+        <div class="form-group">
+          <label for="title">Title *</label>
+          <input 
+            type="text" 
+            id="title" 
+            [(ngModel)]="title" 
+            placeholder="Enter knowledge box title"
+            class="form-input"
+            [disabled]="isSaving"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="topic">Topic *</label>
+          <input 
+            type="text" 
+            id="topic" 
+            [(ngModel)]="topic" 
+            placeholder="Enter topic (e.g., PLC Programming, Machine Learning)"
+            class="form-input"
+            [disabled]="isSaving"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="tags">Tags</label>
+          <input 
+            type="text" 
+            id="tags" 
+            [(ngModel)]="tagsInput" 
+            placeholder="Enter tags separated by commas (e.g., programming, automation, tutorial)"
+            class="form-input"
+            [disabled]="isSaving"
+          >
+        </div>
+
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              [(ngModel)]="isPublic"
+              [disabled]="isSaving"
+            >
+            <span class="checkbox-text">Make this knowledge box public</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <label for="content">Content</label>
+        <textarea 
+          id="content" 
+          [(ngModel)]="content" 
+          placeholder="Start writing your knowledge content here. You can organize your thoughts, research findings, and learning notes..."
+          class="content-textarea"
+          [disabled]="isSaving"
+        ></textarea>
+      </div>
+    </div>
+
+    <div class="editor-actions">
+      <button 
+        class="action-btn cancel-btn" 
+        (click)="onCancel()"
+        [disabled]="isSaving"
+      >
+        Cancel
+      </button>
+      <button 
+        class="action-btn save-btn" 
+        (click)="onSave()"
+        [disabled]="isSaving"
+      >
+        <span *ngIf="!isSaving">{{ isNew ? 'Create' : 'Save' }}</span>
+        <span *ngIf="isSaving">{{ isNew ? 'Creating...' : 'Saving...' }}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="loading-container" *ngIf="isLoading">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Loading knowledge box...</p>
+  </div>
+</div>
